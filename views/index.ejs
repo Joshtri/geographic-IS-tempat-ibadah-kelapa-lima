@@ -1,47 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Map</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <style>
-    #map { height: 400px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Geografis - Kelurahan Kelapa Lima</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        #map {
+            height: 400px;
+        }
+
+        .hero.is-primary {
+            background-color: #3273dc;
+            color: #fff;
+        }
+
+        .hero-body {
+            padding: 3rem 0;
+        }
+
+        .title,
+        .subtitle {
+            color: inherit;
+        }
+
+        .subtitle {
+            margin-top: 0.5rem;
+        }
+
+        .button.is-primary {
+            background-color: #3273dc;
+            border-color: #3273dc;
+        }
+
+        .button.is-primary:hover {
+            background-color: #276cda;
+            border-color: #276cda;
+        }
+    </style>
 </head>
+
 <body>
 
-  <%-include('partials/header')%>
+    <!-- Header -->
+    <%-include('partials/header_user'); %>
+    <!-- Header -->
 
-  <div class="container">
+    <!-- Hero -->
+    <section class="hero" style="background-color: #3a6dbe; color: #fff;">
+      <div class="hero-body">
+          <div class="container">
+              <h1 class="title animate__animated animate__fadeInDown">
+                  Selamat Datang di Sistem Informasi Geografis
+              </h1>
+              <h2 class="subtitle animate__animated animate__fadeInUp">
+                  Pemetaan Fasilitas Ibadah di Kelurahan Kelapa Lima
+              </h2>
+              <button class="button is-primary is-large animate__animated animate__fadeIn"
+                  onclick="scrollToMap()">
+                  Lihat Peta Lokasi
+              </button>
+          </div>
+      </div>
+  </section>
+  
 
-  </div>
-  <div id="map"></div>
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="title">Tentang Kami</h2>
+            <p>
+                Sistem Informasi Geografis (SIG) ini memberikan informasi mengenai lokasi dan informasi detail
+                tentang fasilitas ibadah di Kelurahan Kelapa Lima. Dengan menggunakan peta interaktif, pengguna dapat
+                dengan mudah menemukan lokasi fasilitas ibadah yang mereka butuhkan.
+            </p>
+        </div>
+    </section>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    // Mengambil data lokasi dari backend
-    fetch('/locations')
-      .then(response => response.json())
-      .then(locations => {
-        const latLngs = locations.map(location => [location.lat, location.lng]);
-        const map = L.map('map').fitBounds(latLngs); // Inisialisasi peta dan atur tampilan sesuai dengan data lokasi
+    <!-- Map Section -->
+    <section id="map" class="section">
+        <div class="container">
+            <h2 class="title animate__animated animate__fadeIn">Peta Lokasi Fasilitas Ibadah</h2>
+            <div id="map"></div>
+        </div>
+    </section>
 
-        // Menambahkan layer peta dari OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="title">Hubungi Kami</h2>
+            <p>Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami.</p>
+            <p>Email: example@example.com</p>
+            <p>Telepon: 123-456-7890</p>
+        </div>
+    </section>
 
-        locations.forEach(location => {
-          // Menambahkan marka ke peta
-          L.marker([location.lat, location.lng]).addTo(map)
-            .bindPopup(location.name); // Menambahkan popup dengan nama lokasi
-        });
-      })
-      .catch(error => {
-        console.error('Error fetching locations:', error);
-      });
-  </script>
+    <%-include('partials/footer'); %>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Function to scroll to map section when button is clicked
+        function scrollToMap() {
+            document.getElementById('map').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Fetch locations data from backend
+        fetch('/locations')
+            .then(response => response.json())
+            .then(locations => {
+                const latLngs = locations.map(location => [location.lat, location.lng]);
+                const map = L.map('map').fitBounds(latLngs); // Initialize map and set view based on location data
+
+                // Add OpenStreetMap tile layer
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                // Add markers to the map
+                locations.forEach(location => {
+                    L.marker([location.lat, location.lng]).addTo(map)
+                        .bindPopup(location.name); // Add popup with location name
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching locations:', error);
+            });
+    </script>
 </body>
+
 </html>
