@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah Data Lokasi</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-search/dist/leaflet-control-search.min.css"/>
+
+</head>
+<body>
+
+  <%-include('partials/header'); %>
+
+  <!-- Include your header partial if needed -->
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Tambah Data Lokasi</h1>
+      <form id="locationForm" action="/locations" method="POST">
+        <div class="field">
+          <label for="name" class="label">Nama Lokasi:</label>
+          <div class="control">
+            <input type="text" id="name" name="name" class="input" required>
+          </div>
+        </div>
+        <!-- Manual input for latitude and longitude -->
+        <div class="field">
+          <label for="lat" class="label">Latitude:</label>
+          <div class="control">
+            <input type="text" id="lat" name="lat" class="input" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="lng" class="label">Longitude:</label>
+          <div class="control">
+            <input type="text" id="lng" name="lng" class="input" required>
+          </div>
+        </div>
+        <!-- Hidden inputs for latitude and longitude -->
+        <input type="hidden" id="lat-hidden" name="lat">
+        <input type="hidden" id="lng-hidden" name="lng">
+        <div id="search-results"></div>
+
+        <div class="field">
+          <div id="map" style="height: 400px;"></div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <button type="submit" class="button is-primary">Tambah Data Lokasi</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize the map
+    var map = L.map('map').setView([-8.5154, 119.8973], 8); // Set default location
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Add marker to the map when user clicks
+    var marker;
+    map.on('click', function(e) {
+      // Remove existing marker if any
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      // Add a marker at the clicked position
+      marker = L.marker(e.latlng).addTo(map);
+
+      // Update latitude and longitude input fields
+      document.getElementById('lat').value = e.latlng.lat;
+      document.getElementById('lng').value = e.latlng.lng;
+      // Update hidden latitude and longitude input fields
+      document.getElementById('lat-hidden').value = e.latlng.lat;
+      document.getElementById('lng-hidden').value = e.latlng.lng;
+    });
+
+    // Function to update manual latitude and longitude inputs
+    function updateManualInputs() {
+      var lat = document.getElementById('lat').value;
+      var lng = document.getElementById('lng').value;
+
+      // Update hidden latitude and longitude input fields
+      document.getElementById('lat-hidden').value = lat;
+      document.getElementById('lng-hidden').value = lng;
+    }
+
+    // Add event listeners to manual latitude and longitude inputs
+    document.getElementById('lat').addEventListener('input', updateManualInputs);
+    document.getElementById('lng').addEventListener('input', updateManualInputs);
+  </script>
+    
+  <script src="https://unpkg.com/leaflet-control-search/dist/leaflet-control-search.min.js"></script>
+  
+  <script>
+    // Inisialisasi kontrol pencarian
+    var searchControl = new L.Control.Search({
+        position: 'topright', // Atur posisi kontrol pencarian
+        layer: null, // Layer yang akan dicari, jika null maka akan mencari di semua layer
+        initial: false, // Menonaktifkan pencarian otomatis saat memuat peta
+        zoom: 12, // Level zoom yang akan digunakan setelah pencarian berhasil
+        collapsed: false // Menampilkan kotak pencarian terbuka secara default
+    });
+
+    // Tambahkan kontrol pencarian ke peta
+    map.addControl(searchControl);
+
+  </script>
+  
+
+
+</body>
+</html>
