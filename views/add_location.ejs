@@ -3,45 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tambah Data Lokasi</title>
+  <title><%= locals.title %></title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-control-search/dist/leaflet-control-search.min.css"/>
-
 </head>
 <body>
-
-  <%-include('partials/header'); %>
-
   <!-- Include your header partial if needed -->
+  <%-include('partials/header'); %>
 
   <section class="section">
     <div class="container">
+      <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="/data/data_location">Data Lokasi</a></li>
+          <li class="is-active"><a href="#" aria-current="page">Tambah Lokasi</a></li>
+        </ul>
+      </nav>
+      <hr>
+
       <h1 class="title">Tambah Data Lokasi</h1>
-      <form id="locationForm" action="/locations" method="POST">
+      <form id="locationForm" action="/data/post_location" method="POST">
         <div class="field">
           <label for="name" class="label">Nama Lokasi:</label>
           <div class="control">
             <input type="text" id="name" name="name" class="input" required>
           </div>
         </div>
-        <!-- Manual input for latitude and longitude -->
+
+        <!-- Input untuk latitude -->
         <div class="field">
-          <label for="lat" class="label">Latitude:</label>
+          <label for="manualLat" class="label">Latitude:</label>
           <div class="control">
-            <input type="text" id="lat" name="lat" class="input" required>
+            <input type="text" id="manualLat" name="manualLat" class="input" required>
           </div>
         </div>
+
+        <!-- Input untuk longitude -->
         <div class="field">
-          <label for="lng" class="label">Longitude:</label>
+          <label for="manualLng" class="label">Longitude:</label>
           <div class="control">
-            <input type="text" id="lng" name="lng" class="input" required>
+            <input type="text" id="manualLng" name="manualLng" class="input" required>
           </div>
         </div>
-        <!-- Hidden inputs for latitude and longitude -->
-        <input type="hidden" id="lat-hidden" name="lat">
-        <input type="hidden" id="lng-hidden" name="lng">
+
+        <!-- Hidden inputs untuk latitude dan longitude -->
+        <input type="hidden" id="lat" name="lat">
+        <input type="hidden" id="lng" name="lng">
+
         <div id="search-results"></div>
 
         <div class="field">
@@ -59,7 +69,37 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
     // Initialize the map
-    var map = L.map('map').setView([-8.5154, 119.8973], 8); // Set default location
+    var map = L.map('map').setView([-10.17978076419822, 123.74725341796876], 10); // Set default location
+
+
+// Define base layers
+var openStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
+
+var openTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://www.opentopomap.org">OpenTopoMap</a> contributors'
+});
+
+var thunderforestLandscape = L.tileLayer('https://tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey={apikey}', {
+  attribution: '&copy; <a href="https://www.thunderforest.com/maps/landscape/">Thunderforest Landscape</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  apikey: 'your-api-key'
+});
+
+// Add base layers to the map
+var baseLayers = {
+  'OpenStreetMap': openStreetMap,
+  'OpenTopoMap': openTopoMap,
+  'Thunderforest Landscape': thunderforestLandscape
+};
+
+// Create layer control object
+var layerControl = L.control.layers(baseLayers);
+
+// Add layer control to the map
+layerControl.addTo(map);
+
+
 
     // Add OpenStreetMap tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -77,47 +117,49 @@
       // Add a marker at the clicked position
       marker = L.marker(e.latlng).addTo(map);
 
-      // Update latitude and longitude input fields
+      // Update manual latitude and longitude inputs
+      document.getElementById('manualLat').value = e.latlng.lat;
+      document.getElementById('manualLng').value = e.latlng.lng;
+
+      // Update hidden latitude and longitude inputs
       document.getElementById('lat').value = e.latlng.lat;
       document.getElementById('lng').value = e.latlng.lng;
-      // Update hidden latitude and longitude input fields
-      document.getElementById('lat-hidden').value = e.latlng.lat;
-      document.getElementById('lng-hidden').value = e.latlng.lng;
     });
 
-    // Function to update manual latitude and longitude inputs
+    // Function to update manual latitude and longitude inputs when typing
     function updateManualInputs() {
-      var lat = document.getElementById('lat').value;
-      var lng = document.getElementById('lng').value;
+      var lat = document.getElementById('manualLat').value;
+      var lng = document.getElementById('manualLng').value;
 
-      // Update hidden latitude and longitude input fields
-      document.getElementById('lat-hidden').value = lat;
-      document.getElementById('lng-hidden').value = lng;
+      // Update hidden latitude and longitude inputs
+      document.getElementById('lat').value = lat;
+      document.getElementById('lng').value = lng;
+
+      // Update marker position on the map
+      if (marker) {
+        marker.setLatLng([lat, lng]);
+      }
     }
 
     // Add event listeners to manual latitude and longitude inputs
-    document.getElementById('lat').addEventListener('input', updateManualInputs);
-    document.getElementById('lng').addEventListener('input', updateManualInputs);
+    document.getElementById('manualLat').addEventListener('input', updateManualInputs);
+    document.getElementById('manualLng').addEventListener('input', updateManualInputs);
   </script>
-    
+
   <script src="https://unpkg.com/leaflet-control-search/dist/leaflet-control-search.min.js"></script>
   
   <script>
     // Inisialisasi kontrol pencarian
     var searchControl = new L.Control.Search({
-        position: 'topright', // Atur posisi kontrol pencarian
-        layer: null, // Layer yang akan dicari, jika null maka akan mencari di semua layer
-        initial: false, // Menonaktifkan pencarian otomatis saat memuat peta
-        zoom: 12, // Level zoom yang akan digunakan setelah pencarian berhasil
-        collapsed: false // Menampilkan kotak pencarian terbuka secara default
+      position: 'topright', // Atur posisi kontrol pencarian
+      layer: null, // Layer yang akan dicari, jika null maka akan mencari di semua layer
+      initial: false, // Menonaktifkan pencarian otomatis saat memuat peta
+      zoom: 12, // Level zoom yang akan digunakan setelah pencarian berhasil
+      collapsed: false // Menampilkan kotak pencarian terbuka secara default
     });
 
     // Tambahkan kontrol pencarian ke peta
     map.addControl(searchControl);
-
   </script>
-  
-
-
 </body>
 </html>

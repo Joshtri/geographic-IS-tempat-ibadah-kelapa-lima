@@ -3,33 +3,26 @@ const mysql = require('mysql');
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
+var methodOverride = require('method-override')
 const PORT = process.env.PORT || 3000;
+const db = require('./utils/database');
+
+
+const dashboardRoute = require('./router/dashboard');
+const locationRoute = require('./router/location');
 
 // Middleware untuk menangani request body berformat JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(methodOverride('_method'))
 // Menentukan path folder views
 app.set('views', path.join(__dirname, 'views'));
 
 // Menggunakan EJS sebagai view engine
 app.set('view engine', 'ejs');
 
-// Konfigurasi koneksi database MySQL
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root', // Ganti dengan nama pengguna database Anda
-  password: '', // Ganti dengan kata sandi database Anda
-  database: 'db_sig' // Ganti dengan nama database Anda
-});
 
-// Tautan ke database
-db.connect((err) => {
-  if (err) {
-    throw err;
-  }
-  console.log('Terhubung ke database MySQL');
-});
 
 // Rute untuk halaman utama
 app.get('/', (req, res) => {
@@ -50,29 +43,32 @@ app.get('/locations', (req, res) => {
 
 
 // Rute untuk menampilkan form tambah data lokasi
-app.get('/add_location', (req, res) => {
-  res.render('add_location');
-});
+// app.get('/add_location', (req, res) => {
+//   res.render('add_location');
+// });
+
+app.use('/', dashboardRoute);
+app.use('/data', locationRoute);
 
 // Endpoint untuk menambahkan data lokasi baru ke database
-app.post('/locations', (req, res) => {
-  const { name, lat, lng } = req.body;
+// app.post('/locations', (req, res) => {
+//   const { name, lat, lng } = req.body;
 
-  if (!name || !lat || !lng) {
-    return res.status(400).json({ error: 'Nama, lat, dan lng harus disertakan.' });
-  }
+//   if (!name || !lat || !lng) {
+//     return res.status(400).json({ error: 'Nama, lat, dan lng harus disertakan.' });
+//   }
 
-  const sql = 'INSERT INTO locations (name, lat, lng) VALUES (?, ?, ?)';
-  const values = [name, lat, lng];
+//   const sql = 'INSERT INTO locations (name, lat, lng) VALUES (?, ?, ?)';
+//   const values = [name, lat, lng];
 
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    console.log('Data lokasi baru telah ditambahkan:', result);
-    res.status(201).json({ message: 'Data lokasi baru telah ditambahkan.' });
-  });
-});
+//   db.query(sql, values, (err, result) => {
+//     if (err) {
+//       throw err;
+//     }
+//     console.log('Data lokasi baru telah ditambahkan:', result);
+//     res.status(201).json({ message: 'Data lokasi baru telah ditambahkan.' });
+//   });
+// });
 
 // Jalankan server
 app.listen(PORT, () => {

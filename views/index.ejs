@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.css">
     <style>
         #map {
             height: 400px;
@@ -57,11 +58,11 @@
                   Selamat Datang di Sistem Informasi Geografis
               </h1>
               <h2 class="subtitle animate__animated animate__fadeInUp">
-                  Pemetaan Fasilitas Ibadah di Kelurahan Kelapa Lima
+                  Pemetaan Fasilitas Pendidikan di Kecamatan Kelapa Lima
               </h2>
               <button class="button is-primary is-large animate__animated animate__fadeIn"
                   onclick="scrollToMap()">
-                  Lihat Peta Lokasi
+                  Lihat Peta Lokasi <ion-icon class="mx-1" name="map-outline"></ion-icon>
               </button>
           </div>
       </div>
@@ -74,7 +75,7 @@
             <h2 class="title">Tentang Kami</h2>
             <p>
                 Sistem Informasi Geografis (SIG) ini memberikan informasi mengenai lokasi dan informasi detail
-                tentang fasilitas ibadah di Kelurahan Kelapa Lima. Dengan menggunakan peta interaktif, pengguna dapat
+                tentang fasilitas pendidikan di kecamatan Kelapa Lima. Dengan menggunakan peta interaktif, pengguna dapat
                 dengan mudah menemukan lokasi fasilitas ibadah yang mereka butuhkan.
             </p>
         </div>
@@ -88,15 +89,62 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="section">
-        <div class="container">
-            <h2 class="title">Hubungi Kami</h2>
-            <p>Jika Anda memiliki pertanyaan atau masukan, jangan ragu untuk menghubungi kami.</p>
-            <p>Email: example@example.com</p>
-            <p>Telepon: 123-456-7890</p>
+<!-- Education Facilities Section -->
+<section id="facilities" class="section">
+    <div class="container">
+        <h2 class="title">Daftar Fasilitas Pendidikan</h2>
+        <div class="table-container">
+            <table class="table is-fullwidth">
+                <thead>
+                    <tr>
+                        <th>Jenis</th>
+                        <th>Nama</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="3">Sekolah Dasar (SD)</td>
+                        <td>Nama SD 1</td>
+                    </tr>
+                    <tr>
+                        <td>Nama SD 2</td>
+                    </tr>
+                    <tr>
+                        <td>Nama SD 3</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3">Sekolah Menengah Pertama (SMP)</td>
+                        <td>Nama SMP 1</td>
+                    </tr>
+                    <tr>
+                        <td>Nama SMP 2</td>
+                    </tr>
+                    <tr>
+                        <td>Nama SMP 3</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3">Sekolah Menengah Atas (SMA)</td>
+                        <td>Nama SMA 1</td>
+                    </tr>
+                    <tr>
+                        <td>Nama SMA 2</td>
+                    </tr>
+                    <tr>
+                        <td>Nama SMA 3</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    </section>
+    </div>
+</section>
+
+        </div>
+    </div>
+</section>
+
+
+
+    
 
     <%-include('partials/footer'); %>
 
@@ -129,6 +177,8 @@
                 console.error('Error fetching locations:', error);
             });
     </script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 
 </html>

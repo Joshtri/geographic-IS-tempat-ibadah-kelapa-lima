@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= locals.title %></title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+
+    <!-- start header -->
+    <%-include('partials/header'); %>
+    <!-- end header -->
+
+    <!-- main content is here. -->
+    <div class="container mt-5 p-5">
+        <!-- <div class="notification">
+            <button class="delete"></button>
+
+        </div> -->
+        <h3 class="title">Data Lokasi</h3>
+
+        <a href="/data/add_location">
+            <button class="button is-info is-small">Tambah Lokasi</button>
+        </a>
+
+        <table class="table is-hoverable is-fullwidth">
+            <thead>
+                <th>No.</th>
+                <th>Nama Lokasi</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Aksi</th>
+            </thead>
+
+            <tbody>
+                <% locations.forEach((location, index)=> { %>
+                <tr>
+                    <td><%= index + 1%></td>
+                    <td><%= location.name %></td>
+                    <td><%= location.lat %></td>
+                    <td><%= location.lng %></td>
+                    <td>
+                        
+                        <div class="buttons">
+                            <button class="button is-primary is-small" title="Edit">
+                                <ion-icon name="create-outline"></ion-icon> 
+                            </button>
+                            <form id="deleteForm<%= location.id %>" action="/data/delete_location/<%= location.id %>?_method=DELETE" method="POST">
+                                <!-- <input type="hidden" name="_method" value="DELETE"> -->
+                                <button class="button is-danger is-small" onclick="confirmDelete('<%= location.id %>')" title="Delete">
+                                    <ion-icon name="trash-outline"></ion-icon>
+                                </button>
+                            </form>
+                        </div>
+
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+
+        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+            <a class="pagination-previous">Previous</a>
+            <a class="pagination-next">Next page</a>
+            <ul class="pagination-list">
+              <li><a class="pagination-link" aria-label="Goto page 1">1</a></li>
+              <li><span class="pagination-ellipsis">&hellip;</span></li>
+              <li><a class="pagination-link" aria-label="Goto page 45">45</a></li>
+              <li><a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a></li>
+              <li><a class="pagination-link" aria-label="Goto page 47">47</a></li>
+              <li><span class="pagination-ellipsis">&hellip;</span></li>
+              <li><a class="pagination-link" aria-label="Goto page 86">86</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <script>
+        function confirmDelete(locationId) {
+            if (confirm('Apakah Anda yakin ingin menghapus lokasi ini?')) {
+                document.getElementById('deleteForm' + locationId).submit();
+            }
+        }
+    </script>
+    
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
